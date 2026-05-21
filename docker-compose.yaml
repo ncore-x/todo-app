@@ -1,0 +1,43 @@
+services:
+  database:
+    image: ncore99/todo-database:latest
+    container_name: ${DB_CONTAINER_NAME}
+    env_file:
+      - .env
+    ports:
+      - "${DB_EXTERNAL_PORT}:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - ${NETWORK_NAME}
+    restart: unless-stopped
+
+  backend:
+    image: ncore99/todo-backend:latest
+    container_name: ${BACKEND_CONTAINER_NAME}
+    env_file:
+      - .env
+    ports:
+      - "${BACKEND_PORT}:8000"
+    networks:
+      - ${NETWORK_NAME}
+    depends_on:
+      - database
+
+  frontend:
+    image: ncore99/todo-frontend:latest
+    container_name: ${FRONTEND_CONTAINER_NAME}
+    env_file:
+      - .env
+    ports:
+      - "${FRONTEND_PORT}:3000"
+    networks:
+      - ${NETWORK_NAME}
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+networks:
+  todo-network:
+    name: ${NETWORK_NAME}
+    external: true

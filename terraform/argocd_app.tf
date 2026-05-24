@@ -12,6 +12,9 @@ resource "kubernetes_manifest" "todo_app" {
         repoURL        = "https://github.com/ncore-x/todo-app"
         targetRevision = "HEAD"
         path           = "k8s/apps/todo"
+        directory = {
+          recurse = true
+        }
       }
       destination = {
         server    = "https://kubernetes.default.svc"
